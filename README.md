@@ -20,3 +20,15 @@ git clone https://github.com/OmericoN/DevaNet.git
 cd DevaNet
 uv sync
 ```
+
+## The Dataset
+> The dataset consists of handwritten Devanagari digits (०–९) formatted as 32×32 RGB images.
+
+#### Structure
+- **Training set:** 34,000 labeled images
+- **Test set:** 3,000 unlabeled images (used for Kaggle submission/evaluation)
+
+#### Image Details
+- Resolution: 32 × 32 pixels
+- Channels: 3 (RGB)
+- Classes: 10 (digits ०–९)
