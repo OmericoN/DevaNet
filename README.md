@@ -32,3 +32,5 @@ uv sync
 - Resolution: 32 × 32 pixels
 - Channels: 3 (RGB)
 - Classes: 10 (digits ०–९)
+
+![Dataset Sample](assets/dataset_sample.png)
