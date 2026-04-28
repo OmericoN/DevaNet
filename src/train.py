@@ -1,4 +1,4 @@
-from cnn import LeNet
+from cnn import LeNet, EnhancedLeNet
 from config import IMG_DIR_TRAIN, CSV_DIR_TRAIN, BEST_MODEL
 from loader import get_dataloaders
 from pathlib import Path
