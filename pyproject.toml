@@ -13,6 +13,9 @@ dependencies = [
     "torchvision>=0.26.0",
 ]
 
+[tool.setuptools.packages.find]
+where = ["src"]
+
 [tool.pyright]
 # Tells Pyright the venv is inside the current directory (".")
 venvPath = "."

@@ -25,8 +25,6 @@ class DigitDataset(Dataset):
         if image is None:
             raise FileNotFoundError(img_path)
 
-        image = image.astype("float32") / 255.0
-
         if self.transform:
             image = self.transform(image)
         else:
