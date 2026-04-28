@@ -12,8 +12,15 @@ def test(model_path=BEST_MODEL):
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    model = EnhancedLeNet().to(device)
-    model.load_state_dict(torch.load(model_path, map_location=device))
+    checkpoint = torch.load(model_path, map_location=device)
+    config = checkpoint.get("config", {})
+
+    if config.get("model", "enhanced").lower() == "lenet":
+        model = LeNet().to(device)
+    else:
+        model = EnhancedLeNet().to(device)
+
+    model.load_state_dict(checkpoint["model_state_dict"])
     model.eval()
 
     all_preds = []

@@ -1,5 +1,5 @@
 from cnn import LeNet, EnhancedLeNet
-from config import IMG_DIR_TRAIN, CSV_DIR_TRAIN, BEST_MODEL
+from config import IMG_DIR_TRAIN, CSV_DIR_TRAIN, BEST_MODEL, param_config
 from loader import get_dataloaders
 from pathlib import Path
 import torch
@@ -27,14 +27,20 @@ def plot_training(train_losses, val_losses, val_accuracies):
     plt.show()
 
 
-def train(verbose=False):
+def train(config, verbose=False):
     dataloader_train, dataloader_val, _ = get_dataloaders(batch_size=16)
-
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-    model = LeNet().to(device)
     criterion = nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
+
+    if config["model"].lower() == "lenet":
+        model = LeNet().to(device)
+    else:
+        model = EnhancedLeNet().to(device)
+
+    if config["optimizer"].lower() == "adam":
+        optimizer = torch.optim.Adam(model.parameters(), lr=config["lr"])
+    else:
+        optimizer = torch.optim.AdamW(model.parameters(), lr=config["lr"])
 
     train_losses = []
     val_losses = []
@@ -94,11 +100,26 @@ def train(verbose=False):
 
 
 if __name__ == "__main__":
-    best_model_state, train_losses, val_losses, val_accuracies = train(verbose=True)
+    best_model_state, train_losses, val_losses, val_accuracies = train(
+        param_config, verbose=True
+    )
 
-    if best_model_state is not None:
-        save_path = Path(BEST_MODEL)
+    save_path = Path(BEST_MODEL)
+    if save_path.exists():
+        checkpoint = torch.load(save_path)
+        prev_best_acc = checkpoint.get("val_acc", 0)
+    else:
+        prev_best_acc = 0
+
+    if best_model_state is not None and max(val_accuracies) > prev_best_acc:
         save_path.parent.mkdir(parents=True, exist_ok=True)
-        torch.save(best_model_state, save_path)
+        torch.save(
+            {
+                "model_state_dict": best_model_state,
+                "val_acc": max(val_accuracies),
+                "config": param_config,
+            },
+            save_path,
+        )
 
     plot_training(train_losses, val_losses, val_accuracies)
